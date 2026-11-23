@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nexus-analytics
+  namespace: streaming
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: nexus-analytics
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/hostname: docker-desktop
+      securityContext:
+        fsGroup: 185
+      containers:
+        - name: analytics
+          image: nexus-analytics:1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --master
+            - local[2]
+            - --deploy-mode
+            - client
+            - --class
+            - analytics.NexusAnalytics
+            - --conf
+            - spark.ui.enabled=false
+            - --conf
+            - spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
+            - --conf
+            - spark.sql.catalog.nexus_catalog=org.apache.iceberg.spark.SparkCatalog
+            - --conf
+            - spark.sql.catalog.nexus_catalog.type=hadoop
+            - --conf
+            - spark.sql.catalog.nexus_catalog.warehouse=/data/iceberg/warehouse
+            - /app/app.jar
+          env:
+            - name: ICEBERG_WAREHOUSE
+              value: /data/iceberg/warehouse
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          volumeMounts:
+            - name: iceberg-warehouse
+              mountPath: /data/iceberg
+              readOnly: true
+      volumes:
+        - name: iceberg-warehouse
+          persistentVolumeClaim:
+            claimName: nexus-iceberg-warehouse

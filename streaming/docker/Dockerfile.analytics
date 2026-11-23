@@ -1,0 +1,10 @@
+FROM apache/spark:3.5.9
+
+USER root
+WORKDIR /app
+
+COPY target/scala-2.12/nexus-streaming-assembly.jar /app/app.jar
+
+USER 185
+
+ENTRYPOINT ["/opt/spark/bin/spark-submit"]

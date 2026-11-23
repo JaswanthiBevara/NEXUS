@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexus-order-producer
+  namespace: streaming
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus-order-producer
+  template:
+    metadata:
+      labels:
+        app: nexus-order-producer
+    spec:
+      securityContext:
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: producer
+          image: nexus-order-producer:1.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: KAFKA_TOPIC
+              value: nexus-order-events
+            - name: INPUT_DIRECTORY
+              value: /data/incoming
+            - name: STATE_DIRECTORY
+              value: /data/state
+            - name: POLL_INTERVAL_MS
+              value: "5000"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: incoming-data
+              mountPath: /data/incoming
+              readOnly: true
+            - name: producer-state
+              mountPath: /data/state
+      volumes:
+        - name: incoming-data
+          persistentVolumeClaim:
+            claimName: nexus-incoming-data
+        - name: producer-state
+          persistentVolumeClaim:
+            claimName: nexus-producer-state

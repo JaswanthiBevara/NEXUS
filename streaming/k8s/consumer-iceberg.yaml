@@ -1,0 +1,88 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexus-order-consumer-iceberg
+  namespace: streaming
+  labels:
+    app: nexus-order-consumer-iceberg
+spec:
+  replicas: 0
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nexus-order-consumer-iceberg
+  template:
+    metadata:
+      labels:
+        app: nexus-order-consumer-iceberg
+    spec:
+      securityContext:
+        fsGroup: 185
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: consumer
+          image: nexus-order-consumer:2.0-iceberg
+          imagePullPolicy: IfNotPresent
+
+          args:
+            - --master
+            - local[*]
+            - --deploy-mode
+            - client
+            - --class
+            - consumer.OrderEventIcebergConsumer
+            - --conf
+            - spark.ui.enabled=true
+            - --conf
+            - spark.ui.port=4040
+            - --conf
+            - spark.ui.bindAddress=0.0.0.0
+            - /app/app.jar
+
+          envFrom:
+            - configMapRef:
+                name: nexus-consumer-iceberg-config
+
+          env:
+            - name: ICEBERG_WAREHOUSE
+              value: /data/iceberg/warehouse
+
+          ports:
+            - name: spark-ui
+              containerPort: 4040
+              protocol: TCP
+
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+
+          volumeMounts:
+            - name: reference-data
+              mountPath: /data/reference
+              readOnly: true
+
+            - name: consumer-checkpoint
+              mountPath: /data/checkpoint
+
+            - name: iceberg-warehouse
+              mountPath: /data/iceberg
+
+      volumes:
+        - name: reference-data
+          configMap:
+            name: nexus-reference-data
+
+        - name: consumer-checkpoint
+          persistentVolumeClaim:
+            claimName: nexus-consumer-checkpoint
+
+        - name: iceberg-warehouse
+          persistentVolumeClaim:
+            claimName: nexus-iceberg-warehouse

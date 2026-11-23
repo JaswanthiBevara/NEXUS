@@ -1,0 +1,10 @@
+target/ 
+project/target/ 
+*.class 
+*.jar 
+*.bak 
+*.backup 
+.idea/ 
+.vscode/ 
+.metals/ 
+.bloop/ 
