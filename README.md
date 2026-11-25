@@ -323,6 +323,10 @@ NEXUS/
 |-- .gitignore
 |-- README.md
 
+|-- .gitignore
+|-- README.md
+```
+
 ## 7. Setup and Execution
 
 ### Batch Pipeline
@@ -330,19 +334,19 @@ NEXUS/
 1. Configure Azure Data Lake Storage Gen2 access in Azure Databricks.
 2. Upload the batch notebooks to the Databricks workspace.
 3. Configure the storage paths and required access credentials.
-4. Execute `Batch_process.ipynb` to run the main batch pipeline.
-5. Execute `NEXUS_Incremental_Batch_Loading.ipynb` to demonstrate incremental processing.
+4. Execute `Batch_process.ipynb`.
+5. Execute `NEXUS_Incremental_Batch_Loading.ipynb`.
 
 ### Streaming Pipeline
 
 1. Configure Docker and Kubernetes.
 2. Build the producer, streaming consumer, and analytics Docker images.
-3. Deploy the Kafka producer and streaming consumer using Kubernetes manifests.
+3. Deploy the Kafka producer and streaming consumer.
 4. Publish order events through the Scala producer.
-5. Monitor event processing and storage in Apache Iceberg.
-6. Execute the separate analytics Kubernetes Job to generate analytical results.
+5. Monitor processing and Apache Iceberg storage.
+6. Execute the separate analytics Kubernetes Job.
 
-Refer to the individual configuration files and source code for deployment-specific settings.
+Refer to the configuration files and source code for deployment-specific settings.
 
 ---
 
