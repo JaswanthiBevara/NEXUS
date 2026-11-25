@@ -1,0 +1,1 @@
+{"event_id":"EVT900010","order_id":"ORD900010","customer_id":"CUST001","product_id":"PRD001","quantity":2,"unit_price":2499.0,"event_type":"ORDER_CREATED","event_time":"2026-11-24T05:00:00Z","ingest_time":"2026-11-24T05:05:00Z","sales_channel":"WEB","discount_amount":0.0}

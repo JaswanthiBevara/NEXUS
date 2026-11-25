@@ -1,0 +1,242 @@
+PROJECT NEXUS
+CONSOLIDATED EXECUTION LOGS AND RUNTIME EVIDENCE
+================================================
+
+Repository: PROJECT NEXUS
+Evidence window: 2026-11-22 to 2026-11-25
+Purpose: Consolidated record of previously shared Kafka, Spark, Iceberg,
+producer, consumer, analytics, and Kubernetes execution evidence.
+
+IMPORTANT EVIDENCE NOTE
+----------------------
+This document consolidates the execution outputs and details preserved from
+the user's earlier PROJECT NEXUS conversations. Some earlier terminal outputs
+are available only as summarized conversation records, not as their complete
+verbatim text. Those entries are explicitly labelled "RECORDED OUTPUT
+SUMMARY". They must not be treated as complete raw terminal logs.
+
+No new commands were run to generate this document. No missing log lines,
+successful writes, processed event counts, or analytics results have been
+invented.
+
+1. KAFKA PRODUCER - RECORDED OUTPUT SUMMARY
+------------------------------------------
+Date shared: 2026-11-24
+
+Previously shared producer output/details recorded:
+- Producer started.
+- Kafka broker: kafka:9092
+- Kafka topic: nexus-order-events
+- Input directory inside the container: /data/incoming
+- Polling interval: 5000 ms
+- Producer scans filenames matching:
+  order_events_[0-9]{3}.json
+- Processed-file state:
+  /data/state/processed-files.txt
+- The producer skips files already listed in the processed-files state file.
+- Each JSON line from a newly discovered matching file is published to Kafka.
+- The filename is marked processed after publishing.
+- A SLF4J NOP logger warning was present in the previously shared output.
+
+Producer log messages identified from the previously shared producer source:
+- Startup message
+- Processing new batch
+- Batch published successfully
+- Events published
+- Error messages
+
+These message names describe logging statements in the producer source. They
+are not presented here as proof that every batch completed successfully.
+
+2. KAFKA TOPIC OFFSETS - RECORDED COMMAND OUTPUT
+------------------------------------------------
+Date shared: 2026-11-24
+
+Previously shared Kafka end-offset output:
+
+  Partition 0: 18
+  Partition 1: 24
+  Partition 2: 20
+
+  Total end offsets: 62
+
+Note: These are the end-offset values reported in the earlier conversation.
+They are not necessarily a count of 62 successfully processed Iceberg rows.
+
+3. PRODUCER INPUT FILES AND PROCESSED STATE
+-------------------------------------------
+Date shared: 2026-11-24
+
+Input files previously listed:
+  order_events_001.json
+  order_events_002.json
+  order_events_003.json
+  order_events_004.json
+  order_events_005.json
+
+Previously shared processed-files state contained all five filenames.
+
+4. KUBERNETES CLUSTER AND WORKLOAD STATUS - EARLIER SNAPSHOT
+-----------------------------------------------------------
+Date shared: 2026-11-24
+
+Cluster:
+  Context: docker-desktop
+  Kubernetes version: v1.32.2
+  Node status: Ready
+
+Workloads/pods recorded in the earlier conversation:
+  Kafka: kafka
+  Producer: nexus-order-producer
+  Replay producer: nexus-order-producer-iceberg-replay
+  Iceberg consumer: nexus-order-consumer-iceberg
+  Analytics pod: nexus-analytics-7z2sm
+
+At that earlier snapshot:
+- Kafka was Running.
+- Producer pods were reported Running.
+- Iceberg consumer was reported Running.
+- The analytics pod nexus-analytics-7z2sm was Completed.
+- Several earlier Spark/inspector pods were in Error/Failed states.
+- One earlier Spark driver was OOMKilled.
+
+Earlier Spark/Iceberg failure evidence:
+  Pod: sensor-kafka-to-iceberg-47477ca1f9be4d65-driver
+  Application: com.demo.SensorStreamingApp
+  Image: spark-kafka-iceberg:1.0
+  Memory request/limit: 640Mi
+  Termination reason: OOMKilled
+  Exit code: 137
+  Mounted data volume: streaming-data at /data
+
+A previous attempt to retrieve that old driver's logs reported that the
+container log file no longer existed / could not be resolved. Therefore its
+full raw log output was not recoverable in that earlier session.
+
+5. EARLIER CONSUMER PROCESS AND KAFKA OFFSETS
+---------------------------------------------
+Date shared: 2026-11-24
+
+Previously shared consumer process details:
+  Process: SparkSubmit (PID 1)
+  Main class: consumer.OrderEventConsumer
+  Application JAR: /app/app.jar
+  Spark master: local[*]
+  Spark UI port: 4040
+
+This was an earlier consumer/runtime snapshot. The later active Iceberg
+consumer is a separate implementation and is documented below.
+
+6. KUBERNETES POD STATUS - 2026-11-25 SNAPSHOT
+----------------------------------------------
+Command shared by user:
+  kubectl get pods -n streaming
+
+Output:
+
+  NAME                                              READY   STATUS      RESTARTS      AGE
+  iceberg-inspector                                 0/1     Error       0             4d15h
+  kafka-bcf4c759b-hxb6z                             1/1     Running     9 (25h ago)   6d
+  nexus-analytics-7z2sm                             0/1     Completed   0             2d1h
+  nexus-data-transfer                               0/1     Completed   0             2d23h
+  nexus-delta-inspector                             0/1     Error       0             3d13h
+  nexus-order-consumer-iceberg-8559d8ccc7-ltz7r     1/1     Running     3 (25h ago)   2d13h
+  nexus-order-producer-6b856d884f-mpvmc             0/1     Error       1 (25h ago)   27h
+  sensor-kafka-to-iceberg-3d6d7aa1f3658776-exec-1   0/1     Error       0             5d21h
+  sensor-kafka-to-iceberg-47477ca1f9be4d65-driver   0/1     OOMKilled   0             4d15h
+  sensor-kafka-to-iceberg-bc3cbda1f361c82f-driver   0/1     Error       0             5d21h
+  sensor-kafka-to-iceberg-ee15bda1f9be7b19-exec-1   0/1     Completed   0             4d15h
+  spark-connectivity-test                           0/1     Completed   0             5d20h
+  spark-submit-client                               0/1     Error       0             4d15h
+
+Interpretation limited to this snapshot:
+- Kafka broker pod was Running.
+- Iceberg consumer pod was Running (1/1).
+- Analytics pod was Completed.
+- Producer pod shown in this snapshot was in Error.
+- Several older inspector/Spark pods were Error, Completed, or OOMKilled.
+- Completed means the pod process exited; it does not by itself establish
+  which metrics or output rows were produced.
+- This snapshot must not be represented as the current cluster status.
+
+7. ACTIVE ICEBERG CONSUMER - 2026-11-25 LOG CAPTURE
+---------------------------------------------------
+Command shared by user:
+  kubectl logs nexus-order-consumer-iceberg-8559d8ccc7-ltz7r -n streaming --tail=100
+
+Recorded details from the 100-line output:
+- Spark version: 3.5.9
+- Operating system: Linux
+- Java version: 11.0.31
+- Application submitted:
+  NEXUS Order Event Iceberg Consumer
+- Spark UI started on port 4040.
+- Spark driver/executor initialization was shown.
+- Application JAR was fetched and added.
+- BlockManager registration was shown.
+
+Evidence limitation:
+The last 100 lines reviewed showed Spark startup and initialization. They did
+not show confirmed Kafka event consumption or a successful Iceberg table
+write. Therefore this output is startup evidence only, not proof of successful
+end-to-end event processing.
+
+8. ANALYTICS JOB
+----------------
+Pod previously observed:
+  nexus-analytics-7z2sm
+
+Status in the 2026-11-25 pod snapshot:
+  Completed
+
+The analytics application is part of the project, but the full raw output of
+the analytics pod was not present in the preserved conversation evidence
+used to create this file. No analytics metric values are asserted here.
+
+9. PROJECT STREAMING CONFIGURATION RECORDED IN EARLIER CONVERSATIONS
+--------------------------------------------------------------------
+Kafka:
+  Broker: kafka:9092
+  Topic: nexus-order-events
+
+Producer:
+  Input directory: /data/incoming
+  Poll interval: 5000 ms
+  File pattern: order_events_[0-9]{3}.json
+  Processed state: /data/state/processed-files.txt
+
+Iceberg consumer deployment details recorded:
+  Image: nexus-order-consumer:2.0-iceberg
+  Main class: consumer.OrderEventIcebergConsumer
+  Spark mode: local
+  Checkpoint and Iceberg warehouse PVCs are mounted/configured.
+
+Earlier deployment details:
+  Producer image: nexus-order-producer:1.1
+  Producer uses Kafka at kafka:9092.
+  Producer input and state directories are backed by PVCs.
+
+10. EVIDENCE STATUS / WHAT IS NOT CLAIMED
+-----------------------------------------
+This consolidated record supports the following statements:
+- Kafka broker was observed Running in the 2026-11-25 snapshot.
+- The active Iceberg consumer was observed Running in that snapshot.
+- The active Iceberg consumer's Spark 3.5.9 startup was captured.
+- The analytics pod was observed Completed.
+- A producer pod was in Error in the 2026-11-25 snapshot.
+- Earlier Kafka end offsets were recorded as 18, 24, and 20 across three
+  partitions (62 total).
+- Earlier producer input files and processed-state entries were recorded.
+- Older Spark/Iceberg workloads included Error and OOMKilled failures.
+
+This document does NOT claim:
+- That every producer pod was healthy at the latest snapshot.
+- That the consumer processed new Kafka events during the captured last 100
+  log lines.
+- That the consumer successfully wrote rows to Iceberg based only on startup
+  logs.
+- That the analytics job produced specific metric values.
+- That older failed Spark pods are part of the currently active pipeline.
+- That summarized historical entries are verbatim raw terminal output.
+
+END OF CONSOLIDATED EVIDENCE

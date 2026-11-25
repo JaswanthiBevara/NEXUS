@@ -1,0 +1,103 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexus-order-consumer
+  namespace: streaming
+  labels:
+    app: nexus-order-consumer
+
+spec:
+  replicas: 1
+
+  strategy:
+    type: Recreate
+
+  selector:
+    matchLabels:
+      app: nexus-order-consumer
+
+  template:
+    metadata:
+      labels:
+        app: nexus-order-consumer
+
+    spec:
+      terminationGracePeriodSeconds: 60
+
+      securityContext:
+        fsGroup: 185
+
+      containers:
+        - name: consumer
+          image: nexus-order-consumer:1.1
+          imagePullPolicy: IfNotPresent
+
+          args:
+            - "--master"
+            - "local[*]"
+            - "--deploy-mode"
+            - "client"
+            - "--class"
+            - "consumer.OrderEventConsumer"
+            - "--conf"
+            - "spark.ui.enabled=true"
+            - "--conf"
+            - "spark.ui.port=4040"
+            - "--conf"
+            - "spark.ui.bindAddress=0.0.0.0"
+            - "/app/app.jar"
+
+          envFrom:
+            - configMapRef:
+                name: nexus-consumer-config
+
+          ports:
+            - name: spark-ui
+              containerPort: 4040
+              protocol: TCP
+
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+
+          startupProbe:
+            httpGet:
+              path: /
+              port: spark-ui
+            periodSeconds: 10
+            failureThreshold: 30
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: spark-ui
+            periodSeconds: 10
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: spark-ui
+            periodSeconds: 20
+            failureThreshold: 3
+
+          volumeMounts:
+            - name: consumer-checkpoint
+              mountPath: /data/checkpoint
+
+            - name: streaming-data
+              mountPath: /data/delta
+
+      volumes:
+        - name: consumer-checkpoint
+          persistentVolumeClaim:
+            claimName: nexus-consumer-checkpoint
+
+        - name: streaming-data
+          persistentVolumeClaim:
+            claimName: nexus-streaming-data

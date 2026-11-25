@@ -1,10 +1,24 @@
-target/ 
-project/target/ 
-*.class 
-*.jar 
-*.bak 
-*.backup 
-.idea/ 
-.vscode/ 
-.metals/ 
-.bloop/ 
+# Scala / SBT build outputs
+target/
+**/target/
+project/target/
+**/project/target/
+
+# Compiled files and packaged artifacts
+*.class
+*.jar
+
+# Backup files
+*.bak
+*.backup
+
+# IDE files
+.idea/
+.vscode/
+.metals/
+.bloop/
+.bsp/
+.scala-build/
+
+# Legacy Delta consumer - keep locally, exclude from GitHub
+Data Ingestion/Streaming/NEXUS_Spark_Project/src/main/scala/consumer/OrderEventConsumer.scala

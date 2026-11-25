@@ -41,7 +41,7 @@ spec:
           volumeMounts:
             - name: incoming-data
               mountPath: /data/incoming
-              readOnly: true
+
             - name: producer-state
               mountPath: /data/state
       volumes:

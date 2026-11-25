@@ -258,54 +258,70 @@ The analytics job is deployed separately using Kubernetes.
 ```text
 NEXUS/
 |
-|-- batch/
-|   |-- Batch_process.ipynb
-|   |-- NEXUS_Incremental_Batch_Loading.ipynb
-|   |-- data_dictionary.csv
-|   |
-|   |-- raw/
-|   |   |-- customers/
-|   |   |-- orders/
-|   |   |-- products/
-|   |
-|   |-- incremental/
-|   |   |-- orders_updates/
-|   |
-|   |-- schema_evolution/
-|       |-- orders_v2/
+|-- Architecture/
 |
-|-- streaming/
-|   |-- src/main/scala/
-|   |   |-- analytics/
-|   |   |   |-- NexusAnalytics.scala
-|   |   |
-|   |   |-- consumer/
-|   |   |   |-- OrderEventIcebergConsumer.scala
-|   |   |
-|   |   |-- producer/
-|   |       |-- OrderEventProducer.scala
+|-- Dashboard/
+|
+|-- Data Ingestion/
+|   |-- Batch/
+|   |   |-- Batch_process.ipynb
+|   |   |-- NEXUS_Incremental_Batch_Loading.ipynb
 |   |
-|   |-- docker/
+|   |-- Streaming/
+|       |-- NEXUS_Spark_Project/
+|           |-- src/main/scala/
+|           |   |-- analytics/
+|           |   |   |-- NexusAnalytics.scala
+|           |   |-- consumer/
+|           |   |   |-- OrderEventIcebergConsumer.scala
+|           |   |-- producer/
+|           |       |-- OrderEventProducer.scala
+|           |
+|           |-- reference/
+|           |   |-- customers.csv
+|           |   |-- products.csv
+|           |
+|           |-- project/
+|           |-- build.sbt
+|
+|-- Datasets/
+|   |-- raw/
+|   |   |-- customers/customers.csv
+|   |   |-- orders/orders.csv
+|   |   |-- products/products.csv
+|   |
+|   |-- incremental/orders_updates.csv
+|   |-- schema_evolution/orders_v2.csv
+|   |-- streaming/
+|   |   |-- micro_batches/
+|   |   |-- order_event.schema.json
+|   |   |-- order_events.jsonl
+|   |   |-- order_events_007.json ... order_events_011.json
+|   |   |-- order_events_kafka_keyed.txt
+|   |   |-- replay-patch.json
+|   |
+|   |-- data_dictionary.csv
+|
+|-- Development/
+|   |-- Docker/
 |   |   |-- Dockerfile.producer
 |   |   |-- Dockerfile.consumer.iceberg
 |   |   |-- Dockerfile.analytics
+|   |   |-- legacy/Dockerfile.consumer
 |   |
-|   |-- k8s/
-|   |   |-- producer-deployment.yaml
-|   |   |-- consumer-iceberg.yaml
-|   |   |-- iceberg-storage.yaml
-|   |   |-- analytics-job.yaml
-|   |
-|   |-- micro_batches/
-|   |-- reference/
-|   |-- order_event.schema.json
-|   |-- build.sbt
+|   |-- Kubernetes/
+|   |-- Scripts/
+|
+|-- Logging/
+|
+|-- Testing/
+|   |-- evidence/
+|
+|-- docs/
+|   |-- Streaming_Commands.rtf
 |
 |-- .gitignore
 |-- README.md
-```
-
----
 
 ## 7. Setup and Execution
 
