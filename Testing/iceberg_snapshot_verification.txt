@@ -1,0 +1,20 @@
+PS C:\Project_Nexus\nexus> kubectl exec -n streaming deployment/nexus-order-consumer-iceberg -- /opt/spark/bin/spark-sql --jars /app/app.jar --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" --conf "spark.sql.catalog.nexus_catalog=org.apache.iceberg.spark.SparkCatalog" --conf "spark.sql.catalog.nexus_catalog.type=hadoop" --conf "spark.sql.catalog.nexus_catalog.warehouse=/data/iceberg/warehouse" -e "SELECT committed_at, snapshot_id, parent_id, operation, summary FROM nexus_catalog.streaming.curated_order_events.snapshots ORDER BY committed_at DESC"
+26/11/25 08:09:29 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/25 08:09:38 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+26/11/25 08:09:52 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
+26/11/25 08:09:52 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+26/11/25 08:10:17 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 2.3.0
+26/11/25 08:10:17 WARN ObjectStore: setMetaStoreSchemaVersion called but recording version is disabled: version = 2.3.0, comment = Set by MetaStore UNKNOWN@10.1.0.69
+26/11/25 08:10:17 WARN ObjectStore: Failed to get database default, returning NoSuchObjectException
+Spark Web UI available at http://nexus-order-consumer-iceberg-8559d8ccc7-ltz7r:4041
+Spark master: local[*], Application Id: local-1795594178957
+Time taken: 24.163 seconds, Fetched 6 row(s)
+2026-11-24 05:17:43.985 99874542172358366       7240327722240996629     overwrite       {"added-data-files":"1","added-files-size":"4847","added-records":"1","changed-partition-count":"1","spark.app.id":"local-1795491406890","total-data-files":"47","total-delete-files":"0","total-equality-deletes":"0","total-files-size":"224589","total-position-deletes":"0","total-records":"50"}
+2026-11-23 04:54:27.194 7240327722240996629     1195901928282210548     overwrite       {"added-data-files":"1","added-files-size":"4847","added-records":"1","changed-partition-count":"1","deleted-data-files":"1","deleted-records":"1","removed-files-size":"4847","spark.app.id":"local-1795406089958","total-data-files":"46","total-delete-files":"0","total-equality-deletes":"0","total-files-size":"219742","total-position-deletes":"0","total-records":"49"}
+2026-11-23 04:47:10.035 1195901928282210548     7395588058653322956     overwrite       {"added-data-files":"1","added-files-size":"4847","added-records":"1","changed-partition-count":"1","spark.app.id":"local-1795406089958","total-data-files":"46","total-delete-files":"0","total-equality-deletes":"0","total-files-size":"219742","total-position-deletes":"0","total-records":"49"}
+2026-11-22 16:02:43.344 7395588058653322956     8207669414628851465     append  {"added-data-files":"16","added-files-size":"76440","added-records":"16","changed-partition-count":"1","spark.app.id":"local-1795362209298","total-data-files":"45","total-delete-files":"0","total-equality-deletes":"0","total-files-size":"214895","total-position-deletes":"0","total-records":"48"}
+2026-11-22 16:01:46.205 8207669414628851465     5555984306614103429     append  {"added-data-files":"1","added-files-size":"4748","added-records":"1","changed-partition-count":"1","spark.app.id":"local-1795362209298","total-data-files":"29","total-delete-files":"0","total-equality-deletes":"0","total-files-size":"138455","total-position-deletes":"0","total-records":"32"}
+2026-11-22 15:10:09.909 5555984306614103429     NULL    append  {"added-data-files":"28","added-files-size":"133707","added-records":"31","changed-partition-count":"1","spark.app.id":"local-1795360110472","total-data-files":"28","total-delete-files":"0","total-equality-deletes":"0","total-files-size":"133707","total-position-deletes":"0","total-records":"31"}
+PS C:\Project_Nexus\nexus>

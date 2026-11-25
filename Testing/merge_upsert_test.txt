@@ -1,0 +1,60 @@
+PS C:\Project_Nexus\nexus\streaming> kubectl logs -n streaming deployment/nexus-order-consumer-iceberg --since=5m
+
+==============================================
+MICRO-BATCH 3
+==============================================
+Raw events: 1
+Rejected events: 0
+Late events: 0
+Curated candidates: 1
+Previous maximum event time: 2026-11-22 08:40:00.0
+New maximum event time: 2026-11-23 04:40:00.0
+Completed batch: 3
+
+PS C:\Project_Nexus\nexus\streaming> kubectl exec -n streaming deployment/nexus-order-consumer-iceberg -- /opt/spark/bin/spark-sql --jars /app/app.jar --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" --conf "spark.sql.catalog.nexus_catalog=org.apache.iceberg.spark.SparkCatalog" --conf "spark.sql.catalog.nexus_catalog.type=hadoop" --conf "spark.sql.catalog.nexus_catalog.warehouse=/data/iceberg/warehouse" -e "SELECT event_id, order_id, customer_id, product_id, quantity, unit_price, event_type, event_time, ingest_time, kafka_partition, kafka_offset FROM nexus_catalog.streaming.curated_order_events WHERE event_id = 'EVT999998'"
+26/11/23 04:49:21 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/23 04:49:29 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+26/11/23 04:49:42 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
+26/11/23 04:49:42 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+26/11/23 04:49:57 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 2.3.0
+26/11/23 04:49:57 WARN ObjectStore: setMetaStoreSchemaVersion called but recording version is disabled: version = 2.3.0, comment = Set by MetaStore UNKNOWN@10.1.0.50
+Spark Web UI available at http://nexus-order-consumer-iceberg-8559d8ccc7-ltz7r:4041
+Spark master: local[*], Application Id: local-1795409370518
+Time taken: 31.005 seconds, Fetched 1 row(s)
+EVT999998       ORD999998       CUST001 PRD001  1       2499.0  ORDER_CREATED   2026-11-23 04:40:00     2026-11-23 04:41:00     2       40
+
+
+PS C:\Project_Nexus\nexus\streaming> $event = '{"event_id":"EVT999998","order_id":"ORD999998","customer_id":"CUST001","product_id":"PRD001","quantity":2,"unit_price":2499.0,"event_type":"ORDER_UPDATED","event_time":"2026-11-23T04:50:00Z","ingest_time":"2026-11-23T04:51:00Z","sales_channel":"WEB","discount_amount":0.0}'; $event | kubectl exec -i -n streaming kafka-bcf4c759b-hxb6z -- /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server kafka:9092 --topic nexus-order-events
+PS C:\Project_Nexus\nexus\streaming>
+
+PS C:\Project_Nexus\nexus\streaming> kubectl logs -n streaming deployment/nexus-order-consumer-iceberg --since=5m
+
+==============================================
+MICRO-BATCH 4
+==============================================
+Raw events: 1
+Rejected events: 0
+Late events: 0
+Curated candidates: 1
+Previous maximum event time: 2026-11-23 04:40:00.0
+New maximum event time: 2026-11-23 04:50:00.0
+Completed batch: 4
+PS C:\Project_Nexus\nexus\streaming>
+
+PS C:\Project_Nexus\nexus\streaming> kubectl exec -n streaming deployment/nexus-order-consumer-iceberg -- /opt/spark/bin/spark-sql --jars /app/app.jar --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" --conf "spark.sql.catalog.nexus_catalog=org.apache.iceberg.spark.SparkCatalog" --conf "spark.sql.catalog.nexus_catalog.type=hadoop" --conf "spark.sql.catalog.nexus_catalog.warehouse=/data/iceberg/warehouse" -e "SELECT event_id, order_id, quantity, unit_price, event_type, event_time, ingest_time, kafka_partition, kafka_offset, COUNT(*) OVER (PARTITION BY event_id) AS event_id_count FROM nexus_catalog.streaming.curated_order_events WHERE event_id = 'EVT999998'"
+26/11/23 04:55:26 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/23 04:55:35 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+26/11/23 04:55:44 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
+26/11/23 04:55:44 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+26/11/23 04:55:59 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 2.3.0
+26/11/23 04:55:59 WARN ObjectStore: setMetaStoreSchemaVersion called but recording version is disabled: version = 2.3.0, comment = Set by MetaStore UNKNOWN@10.1.0.50
+Spark Web UI available at http://nexus-order-consumer-iceberg-8559d8ccc7-ltz7r:4041
+Spark master: local[*], Application Id: local-1795409736165
+Time taken: 36.512 seconds, Fetched 1 row(s)
+EVT999998       ORD999998       2       2499.0  ORDER_UPDATED   2026-11-23 04:50:00     2026-11-23 04:51:00     1
+        54      1
+

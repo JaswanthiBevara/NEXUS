@@ -1,0 +1,62 @@
+PS C:\Project_Nexus\nexus> kubectl exec -n streaming deployment/nexus-order-consumer-iceberg -- sh -c "ls -la /data/checkpoint; find /data/checkpoint -maxdepth 6 -type f -print"
+total 16
+drwxrwxrwx 4 root  root  4096 Nov 22 14:29 .
+drwxr-xr-x 1 spark root  4096 Nov 25 07:48 ..
+drwxr-xr-x 5 spark spark 4096 Nov 21 17:55 order-events
+drwxr-xr-x 5 spark spark 4096 Nov 22 14:29 order-events-iceberg
+/data/checkpoint/order-events/offsets/1
+/data/checkpoint/order-events/offsets/.0.crc
+/data/checkpoint/order-events/offsets/.2.crc
+/data/checkpoint/order-events/offsets/.4.crc
+/data/checkpoint/order-events/offsets/3
+/data/checkpoint/order-events/offsets/0
+/data/checkpoint/order-events/offsets/4
+/data/checkpoint/order-events/offsets/2
+/data/checkpoint/order-events/offsets/.3.crc
+/data/checkpoint/order-events/offsets/.1.crc
+/data/checkpoint/order-events/.metadata.crc
+/data/checkpoint/order-events/commits/1
+/data/checkpoint/order-events/commits/.0.crc
+/data/checkpoint/order-events/commits/.2.crc
+/data/checkpoint/order-events/commits/.4.crc
+/data/checkpoint/order-events/commits/3
+/data/checkpoint/order-events/commits/0
+/data/checkpoint/order-events/commits/4
+/data/checkpoint/order-events/commits/2
+/data/checkpoint/order-events/commits/.3.crc
+/data/checkpoint/order-events/commits/.1.crc
+/data/checkpoint/order-events/sources/0/.0.crc
+/data/checkpoint/order-events/sources/0/0
+/data/checkpoint/order-events/metadata
+/data/checkpoint/order-events-iceberg/offsets/1
+/data/checkpoint/order-events-iceberg/offsets/.6.crc
+/data/checkpoint/order-events-iceberg/offsets/6
+/data/checkpoint/order-events-iceberg/offsets/.0.crc
+/data/checkpoint/order-events-iceberg/offsets/.2.crc
+/data/checkpoint/order-events-iceberg/offsets/.4.crc
+/data/checkpoint/order-events-iceberg/offsets/3
+/data/checkpoint/order-events-iceberg/offsets/.5.crc
+/data/checkpoint/order-events-iceberg/offsets/5
+/data/checkpoint/order-events-iceberg/offsets/0
+/data/checkpoint/order-events-iceberg/offsets/4
+/data/checkpoint/order-events-iceberg/offsets/2
+/data/checkpoint/order-events-iceberg/offsets/.3.crc
+/data/checkpoint/order-events-iceberg/offsets/.1.crc
+/data/checkpoint/order-events-iceberg/.metadata.crc
+/data/checkpoint/order-events-iceberg/commits/1
+/data/checkpoint/order-events-iceberg/commits/.6.crc
+/data/checkpoint/order-events-iceberg/commits/6
+/data/checkpoint/order-events-iceberg/commits/.0.crc
+/data/checkpoint/order-events-iceberg/commits/.2.crc
+/data/checkpoint/order-events-iceberg/commits/.4.crc
+/data/checkpoint/order-events-iceberg/commits/3
+/data/checkpoint/order-events-iceberg/commits/.5.crc
+/data/checkpoint/order-events-iceberg/commits/5
+/data/checkpoint/order-events-iceberg/commits/0
+/data/checkpoint/order-events-iceberg/commits/4
+/data/checkpoint/order-events-iceberg/commits/2
+/data/checkpoint/order-events-iceberg/commits/.3.crc
+/data/checkpoint/order-events-iceberg/commits/.1.crc
+/data/checkpoint/order-events-iceberg/sources/0/.0.crc
+/data/checkpoint/order-events-iceberg/sources/0/0
+/data/checkpoint/order-events-iceberg/metadata
